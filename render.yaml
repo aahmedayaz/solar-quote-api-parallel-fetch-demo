@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: solar-quote-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: ENABLE_CORS
+        value: "true"
+      - key: CORS_ALLOW_ORIGINS
+        value: "*"
+      - key: REQUEST_TIMEOUT_SECONDS
+        value: "10"
+      - key: SOLAR_API_BASE_URL
+        value: https://api.forecast.solar
