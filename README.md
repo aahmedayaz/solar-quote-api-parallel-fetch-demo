@@ -35,6 +35,7 @@ A FastAPI backend service that accepts a solar installation location, fetches re
 ├── .dockerignore
 ├── .env.example
 ├── Dockerfile
+├── railway.json
 ├── render.yaml
 ├── requirements.txt
 ├── README.md
@@ -263,6 +264,48 @@ After deployment, your URLs will look like:
 
 - `https://your-service-name.onrender.com/docs`
 - `https://your-service-name.onrender.com/solar-quote?lat=51.5&lon=-0.1`
+
+## Deploy to Railway
+
+This repository includes a `railway.json` file that sets a Railway-safe start command. It wraps Uvicorn in `/bin/sh -c` so Railway can expand the hosted `PORT` variable correctly.
+
+### 1. Push the code to GitHub
+
+Push the latest version of this repository to GitHub first.
+
+### 2. Create a Railway service
+
+1. Log in to [Railway](https://railway.com/).
+2. Create a new project.
+3. Deploy from your GitHub repository.
+
+### 3. Configure Railway
+
+- If Railway detects the `Dockerfile`, that is fine.
+- Do not use a raw custom start command like `uvicorn app.main:app --host 0.0.0.0 --port $PORT`.
+- Prefer leaving the dashboard start command empty so Railway can use `railway.json` or the container default.
+
+If you must set a custom start command manually, use:
+
+```bash
+/bin/sh -c "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"
+```
+
+### 4. Add environment variables
+
+Set at least:
+
+- `ENVIRONMENT=production`
+- `ENABLE_CORS=true`
+- `CORS_ALLOW_ORIGINS=*`
+
+### 5. Deploy and test
+
+After the deploy finishes, test:
+
+- `https://your-railway-app.up.railway.app/health`
+- `https://your-railway-app.up.railway.app/docs`
+- `https://your-railway-app.up.railway.app/solar-quote?lat=51.5&lon=-0.1`
 
 ## Deploy to Koyeb
 
