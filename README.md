@@ -32,7 +32,10 @@ A FastAPI backend service that accepts a solar installation location, fetches re
 │   │   └── solar_service.py
 │   ├── __init__.py
 │   └── main.py
+├── .dockerignore
 ├── .env.example
+├── Dockerfile
+├── render.yaml
 ├── requirements.txt
 ├── README.md
 └── run.py
@@ -260,6 +263,55 @@ After deployment, your URLs will look like:
 
 - `https://your-service-name.onrender.com/docs`
 - `https://your-service-name.onrender.com/solar-quote?lat=51.5&lon=-0.1`
+
+## Deploy to Koyeb
+
+This repository now includes a root `Dockerfile`, so Koyeb can deploy it using the Dockerfile builder with very little manual setup.
+
+### 1. Push the code to GitHub
+
+Push the latest version of this repository to GitHub first.
+
+### 2. Create a new app in Koyeb
+
+1. Log in to [Koyeb](https://www.koyeb.com/).
+2. Click `Create App`.
+3. Choose `GitHub` as the deployment source.
+4. Select this repository and branch.
+
+### 3. Configure the service
+
+Use these settings:
+
+- Builder: `Dockerfile`
+- Dockerfile path: `./Dockerfile`
+- Service type: `Web Service`
+- Exposed port: `8000`
+
+You do not need to override the start command because the `Dockerfile` already starts Uvicorn and reads the hosted `PORT` variable automatically.
+
+### 4. Add environment variables
+
+Set at least:
+
+- `ENVIRONMENT=production`
+- `ENABLE_CORS=true`
+- `CORS_ALLOW_ORIGINS=*`
+
+Optional:
+
+- `SOLAR_API_BASE_URL=https://api.forecast.solar`
+- `REQUEST_TIMEOUT_SECONDS=10`
+
+### 5. Deploy
+
+Create the app and wait for the first deployment to finish.
+
+After deployment, test:
+
+- `https://your-koyeb-app.koyeb.app/docs`
+- `https://your-koyeb-app.koyeb.app/health`
+- `https://your-koyeb-app.koyeb.app/solar-quote?lat=51.5&lon=-0.1`
 
 ## Notes
 
